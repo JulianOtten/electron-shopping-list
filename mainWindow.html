@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+<!-- basic html styling -->
 <html lang="en">
 <head>
     <title>Shopping List</title>
+    <!-- import materialize -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>
 <body>
@@ -10,60 +12,92 @@
             <a class="brand-logo center">ShoppingList</a>
         </div>
     </nav>
+    <h6>Double Click an item to delete it from your shopping list!</h6>
     <ul>
 
     </ul>
     <script>
+        // require electron and the ipcRenderer
         const electron = require('electron');
         const {ipcRenderer} = electron;
+        // select the ul from the html
         const ul = document.querySelector('ul');
-        
+        // if the localStorage item "items" doesnt excists yet, create one.
         if(localStorage.getItem('items') == null) {
             localStorage.setItem("items", '');
         }
+        // update the html code
         update();
 
+        // catch the item add event from index.js
         ipcRenderer.on('item:add', (event, item) => {
+            // define job for later usage
             let Job;
+            // if local storage is empty, fill job with an array with one element, the item that is being added
             if(localStorage.getItem('items') == "")
             {
                 Job = [item];
-            } else 
+            } else // else get the current array from storage and add item to it
             {
                 Job = JSON.parse(localStorage.getItem('items'));
                 Job.push(item)
             }
+            // update local storage and update screen
             localStorage.setItem('items', JSON.stringify(Job));
             update();
         });
 
+        // catch a clear event
         ipcRenderer.on('item:clear', () => {
+            // clear the html, remove the class for styling reasons, and clear the localstorage
             ul.innerHTML = '';
             ul.className = '';
             localStorage.setItem("items", '');
         });
 
+        // listen for a double click on the ul, then remove the clicked li from the localstorage and update the ul
         ul.addEventListener('dblclick', (e) => {
+            // get the value of the li
             let text = e.target.innerHTML;
+            // remove the element from the html
             e.target.remove();
+            // if there are no list items left in the html, set the localstorage to empty and return
             if(ul.children.length == 0) {
                 ul.className = '';
                 localStorage.setItem("items", '');
             }
+
+            // Get all the items in the storage. (Job is just a random name, inspired from JsonObject, but its an array so shrug)
             let Job = JSON.parse(localStorage.getItem('items'));
+            // get the index of the item that needs to be deleted from the storage
             let index = Job.indexOf(text);
+            // if there is no element for some reason, just return
             if(index !== -1){
+                // remove elements from the array. starting from index and counting up 1, so in this case it only deletes the value at index
+                // if this said index,2 it would delete the element at index and the element on index + 1
                 Job.splice(index,1);
             }
+            // update localStorage with the new info
             localStorage.setItem('items', JSON.stringify(Job));
+            // update the information on screen
             update();
         });
 
-        function update(item = null) {
+        /** 
+         * update the ul in the mainWindow to display all the set storage elements
+         * 
+         * @return void 
+         */
+        function update() {
+            // always clear the html before updating
             ul.innerHTML = '';
+            // if the localstorage isnt empty, fill it with list items
             if(localStorage.getItem('items') !== ""){
+                // grab localstorage array
                 let Job = JSON.parse(localStorage.getItem('items'));
+                // add classname collection to the ul for styling
                 ul.className = 'collection';
+                // for each element in the storage, make a list item, add a class to it for styling. add the text to it in node form(prevents errors). append the text into the li, and append the li into the ul
                 Job.forEach(i => {
                     let li = document.createElement('li');
                     li.className = 'collection-item';

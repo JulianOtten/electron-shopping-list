@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+<!-- basic html -->
 <html lang="en">
 <head>
     <title>Add Shopping List Item</title>
+    <!-- import materialize -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>
 <body>
@@ -16,15 +18,21 @@
     </div>
 
     <script>
+        // require electron and ipcRenderer
         const electron = require('electron');
         const {ipcRenderer} = electron;
-
+        // grab form
         const form = document.querySelector('form');
+        // listen for the submit event
         form.addEventListener('submit', submitForm);
 
+        // handle submit
         function submitForm(event){
+            // prevent original submit
             event.preventDefault();
+            // get the value of what we enterd
             const item = document.querySelector('#item').value;
+            // send the value to the main file (i guess this is why it redirects via there, since ipcRenderer seems to always send to main file? not sure)
             ipcRenderer.send('item:add', item);
         }
     </script>
