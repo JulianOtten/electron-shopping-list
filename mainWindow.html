@@ -17,27 +17,62 @@
         const electron = require('electron');
         const {ipcRenderer} = electron;
         const ul = document.querySelector('ul');
+        
+        if(localStorage.getItem('items') == null) {
+            localStorage.setItem("items", '');
+        }
+        update();
 
         ipcRenderer.on('item:add', (event, item) => {
-            ul.className = 'collection';
-            const li = document.createElement('li');
-            li.className = 'collection-item';
-            const itemText = document.createTextNode(item);
-            li.appendChild(itemText);
-            ul.appendChild(li);
+            let Job;
+            if(localStorage.getItem('items') == "")
+            {
+                Job = [item];
+            } else 
+            {
+                Job = JSON.parse(localStorage.getItem('items'));
+                Job.push(item)
+            }
+            localStorage.setItem('items', JSON.stringify(Job));
+            update();
         });
 
         ipcRenderer.on('item:clear', () => {
             ul.innerHTML = '';
             ul.className = '';
+            localStorage.setItem("items", '');
         });
 
         ul.addEventListener('dblclick', (e) => {
+            let text = e.target.innerHTML;
             e.target.remove();
             if(ul.children.length == 0) {
                 ul.className = '';
+                localStorage.setItem("items", '');
             }
+            let Job = JSON.parse(localStorage.getItem('items'));
+            let index = Job.indexOf(text);
+            if(index !== -1){
+                Job.splice(index,1);
+            }
+            localStorage.setItem('items', JSON.stringify(Job));
+            update();
         });
+
+        function update(item = null) {
+            ul.innerHTML = '';
+            if(localStorage.getItem('items') !== ""){
+                let Job = JSON.parse(localStorage.getItem('items'));
+                ul.className = 'collection';
+                Job.forEach(i => {
+                    let li = document.createElement('li');
+                    li.className = 'collection-item';
+                    let itemText = document.createTextNode(i);
+                    li.appendChild(itemText);
+                    ul.appendChild(li);
+                });
+            }
+        }
     </script>
 </body>
 </html> 
