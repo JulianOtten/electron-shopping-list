@@ -26,3 +26,5 @@ npm run build-installer
 and a `dir` folder will appear, with the installer in it.
 
 There are going to be some other files, which you can simply toss away. All you need is the installer and you are good to go!
+
+You can also install the application without any of the above steps through the [Releases](https://github.com/JulianOtten/electron-test/releases) page or clicking [this](https://github.com/JulianOtten/electron-test/releases/download/v1.0.0/shoppinglist.Setup.1.0.0.exe) to download the installer for version 1.0.0!
