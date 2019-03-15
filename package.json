@@ -13,7 +13,7 @@
     "package-win": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"ShoppingList\"",
     "package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/icon.png --prune=true --out=release-builds",
     "pack": "build --dir",
-    "build-installer": "build -w"
+    "build-installer": "npm i -g electron-builder && build -w"
   },
   "keywords": [],
   "author": "Julian Otten",
